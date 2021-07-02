@@ -7,11 +7,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ThreadPool" />
+        <module name="Secret-Messenger" />
         <module name="Abbas-Bu-Azar" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Abbas-Bu-Azar" target="8" />
+      <module name="Secret-Messenger" target="8" />
       <module name="ThreadPool" target="8" />
       <module name="ThreadPool (1)" target="8" />
     </bytecodeTargetLevel>
