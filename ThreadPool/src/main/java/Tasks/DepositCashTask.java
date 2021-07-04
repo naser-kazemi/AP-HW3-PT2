@@ -1,19 +1,20 @@
 package Tasks;
 
 import Bank.ATM;
-import Exceptions.InvalidCashAmountException;
-import Exceptions.NoCardInsertedException;
+import Model.Exceptions.InvalidCashAmountException;
+import Model.Exceptions.NoCardInsertedException;
 import Results.CashDepositedResult;
 import Results.Result;
 
 public class DepositCashTask implements Task {
     private ATM atm;
-    private int amount;
+    private final int amount;
 
 
-    public DepositCashTask (int amount) {
+    public DepositCashTask(int amount) {
         this.amount = amount;
     }
+
     @Override
     public Result run() throws Exception {
         Thread.sleep(1000);

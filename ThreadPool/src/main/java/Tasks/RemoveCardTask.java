@@ -1,7 +1,7 @@
 package Tasks;
 
 import Bank.ATM;
-import Exceptions.NoCardInsertedException;
+import Model.Exceptions.NoCardInsertedException;
 import Results.CardRemovedResult;
 import Results.Result;
 

@@ -4,7 +4,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class WorkerThread extends Thread {
 
-    private BlockingQueue<Runnable> taskQueue;
+    private final BlockingQueue<Runnable> taskQueue;
     private boolean isStopped = false;
 
 
@@ -31,7 +31,7 @@ public class WorkerThread extends Thread {
     }
 
 
-    public synchronized boolean isStopped()  {
+    public synchronized boolean isStopped() {
         return this.isStopped;
     }
 

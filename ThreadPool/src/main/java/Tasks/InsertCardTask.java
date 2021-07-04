@@ -2,14 +2,14 @@ package Tasks;
 
 import Bank.ATM;
 import Bank.Card;
-import Exceptions.WrongPasswordException;
+import Model.Exceptions.WrongPasswordException;
 import Results.CardInsertedResult;
 import Results.Result;
 
 public class InsertCardTask implements Task {
     private ATM atm;
-    private Card card;
-    private String password;
+    private final Card card;
+    private final String password;
 
     public InsertCardTask(Card card, String password) {
         this.card = card;

@@ -1,8 +1,8 @@
 package Tasks;
 
 import Bank.ATM;
-import Exceptions.NoCardInsertedException;
-import Exceptions.NotEnoughBalanceException;
+import Model.Exceptions.NoCardInsertedException;
+import Model.Exceptions.NotEnoughBalanceException;
 import Results.BalanceReturnedResult;
 import Results.Result;
 

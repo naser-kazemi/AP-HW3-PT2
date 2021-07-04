@@ -1,4 +1,4 @@
-package Exceptions;
+package Model.Exceptions;
 
 public class NotEnoughBalanceException extends Exception {
     @Override

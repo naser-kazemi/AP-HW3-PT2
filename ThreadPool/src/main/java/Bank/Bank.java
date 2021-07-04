@@ -1,13 +1,14 @@
 package Bank;
+
 import Tasks.Task;
 
 import java.util.ArrayList;
 
 public class Bank {
     protected ATM[] ATMs;
-    private BankThreadPool bankExecutor;
+    private final BankThreadPool bankExecutor;
     private int size = -1;
-    private int AtmCount;
+    private final int AtmCount;
 
     public Bank(int AtmCount) {
         this.AtmCount = AtmCount;
@@ -27,7 +28,6 @@ public class Bank {
     }
 
 
-
     public ArrayList<Object> runATM(ArrayList<Task> tasks, Handler handler) {
         ArrayList<Object> results = new ArrayList<>();
         bankExecutor.execute(() -> {
@@ -39,7 +39,9 @@ public class Bank {
                     task.setATM(ATMs[ATMIndex]);
                     System.out.println("current task: " + task + "on ATM no." + ATMIndex + " " + ATMs[ATMIndex]);
                     results.add(task.run());
-                } catch(Exception ex) {
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                } catch (Exception ex) {
                     ex.printStackTrace();
                     results.add(ex);
                 }

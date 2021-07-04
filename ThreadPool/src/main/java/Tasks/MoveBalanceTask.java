@@ -2,17 +2,17 @@ package Tasks;
 
 import Bank.ATM;
 import Bank.Card;
-import Exceptions.InvalidCardNoException;
-import Exceptions.InvalidCashAmountException;
-import Exceptions.NoCardInsertedException;
-import Exceptions.NotEnoughBalanceException;
+import Model.Exceptions.InvalidCardNoException;
+import Model.Exceptions.InvalidCashAmountException;
+import Model.Exceptions.NoCardInsertedException;
+import Model.Exceptions.NotEnoughBalanceException;
 import Results.BalanceMovedResult;
 import Results.Result;
 
 public class MoveBalanceTask implements Task {
     private ATM atm;
-    private int amount;
-    private String destCardNo;
+    private final int amount;
+    private final String destCardNo;
 
     public MoveBalanceTask(int amount, String destCardNo) {
         this.amount = amount;

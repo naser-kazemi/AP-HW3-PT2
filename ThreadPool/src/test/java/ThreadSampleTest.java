@@ -1,4 +1,6 @@
-import Bank.*;
+import Bank.Bank;
+import Bank.Card;
+import Bank.Handler;
 import Tasks.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +14,9 @@ public class ThreadSampleTest {
     void eraseData() {
         Card.eraseData();
     }
+
     @Test
-    // Test parallel tasks
+        // Test parallel tasks
     void Test1() {
         Bank bank = new Bank(2);
         ArrayList<Tasks.Task> firstTasks = new ArrayList<>();
@@ -27,7 +30,7 @@ public class ThreadSampleTest {
         bank.runATM(firstTasks, hOne);
         System.out.println("running second task... " + secondTasks);
         bank.runATM(secondTasks, hTwo);
-        while (hOne.notFinished() || hTwo.notFinished()){
+        while (hOne.notFinished() || hTwo.notFinished()) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -57,7 +60,7 @@ public class ThreadSampleTest {
         long startTime = System.currentTimeMillis();
         bank.runATM(firstTasks, hOne);
         bank.runATM(secondTasks, hTwo);
-        while (hFail.notFinished() || hOne.notFinished() || hTwo.notFinished()){
+        while (hFail.notFinished() || hOne.notFinished() || hTwo.notFinished()) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -94,7 +97,7 @@ public class ThreadSampleTest {
         bank.runATM(taskTwo, hTwo);
         System.out.println("running first task... " + taskOne);
         bank.runATM(taskOne, hOne);
-        while (hOne.notFinished() || hTwo.notFinished()){
+        while (hOne.notFinished() || hTwo.notFinished()) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -137,7 +140,7 @@ public class ThreadSampleTest {
         System.out.println("running fifth task... " + five);
         bank.runATM(five, hFive);
 
-        while (hOne.notFinished() || hTwo.notFinished() || hThree.notFinished() || hFour.notFinished() || hFive.notFinished()){
+        while (hOne.notFinished() || hTwo.notFinished() || hThree.notFinished() || hFour.notFinished() || hFive.notFinished()) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {

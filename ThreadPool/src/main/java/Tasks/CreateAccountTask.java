@@ -2,7 +2,7 @@ package Tasks;
 
 import Bank.ATM;
 import Bank.Card;
-import Exceptions.WrongPasswordException;
+import Model.Exceptions.WrongPasswordException;
 import Results.AccountCreatedResult;
 import Results.Result;
 
@@ -11,7 +11,7 @@ public class CreateAccountTask implements Task {
     String cardNo;
     String password;
 
-    public CreateAccountTask (String cardNo, String password) {
+    public CreateAccountTask(String cardNo, String password) {
         this.cardNo = cardNo;
         this.password = password;
     }

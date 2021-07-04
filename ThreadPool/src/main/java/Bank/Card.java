@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Card {
     private static ArrayList<Card> allCards = new ArrayList<Card>();
-    private String cardNo;
+    private final String cardNo;
     private String password;
     private int balance;
 

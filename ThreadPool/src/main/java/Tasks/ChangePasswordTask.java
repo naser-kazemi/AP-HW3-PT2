@@ -1,18 +1,19 @@
 package Tasks;
 
 import Bank.ATM;
-import Exceptions.NoCardInsertedException;
-import Exceptions.WrongPasswordException;
+import Model.Exceptions.NoCardInsertedException;
+import Model.Exceptions.WrongPasswordException;
 import Results.PasswordChangedResult;
 import Results.Result;
 
 public class ChangePasswordTask implements Task {
     private ATM atm;
-    private String newPass;
+    private final String newPass;
 
-    public ChangePasswordTask (String newPassword) {
+    public ChangePasswordTask(String newPassword) {
         this.newPass = newPassword;
     }
+
     @Override
     public Result run() throws Exception {
         Thread.sleep(500);

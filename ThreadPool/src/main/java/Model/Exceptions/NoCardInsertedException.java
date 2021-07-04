@@ -1,4 +1,4 @@
-package Exceptions;
+package Model.Exceptions;
 
 public class NoCardInsertedException extends Exception {
     @Override

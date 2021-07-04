@@ -1,5 +1,5 @@
 package Results;
 
 public interface Result {
-    public boolean equals(Object object);
+    boolean equals(Object object);
 }
