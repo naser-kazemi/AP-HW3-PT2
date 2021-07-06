@@ -57,10 +57,10 @@ public class User {
         return this.contacts;
     }
 
-    public User getContactedUserByUsername(String username) {
-        for (User contactedUser : contacts)
-            if (contactedUser.username.equals(username))
-                return contactedUser;
+    public User getContactByUsername(String username) {
+        for (User contact : contacts)
+            if (contact.username.equals(username))
+                return contact;
         return null;
     }
 

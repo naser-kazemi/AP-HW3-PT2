@@ -1,8 +1,10 @@
 package Controller;
 
+import Model.Connection;
 import Model.Exceptions.*;
 import Model.Message;
 import Model.User;
+import View.ChatMenu;
 import View.Menu;
 
 import java.util.ArrayList;
@@ -10,13 +12,20 @@ import java.util.Comparator;
 
 public class ChatController {
 
-    private boolean portIsAlreadySet = false;
+    private final ArrayList<Integer> openPorts = new ArrayList<>();
+    private boolean isPortSet = false;
     private boolean isFocusOnHostMode = false;
+
+    public void setPortSet(boolean portSet) {
+        isPortSet = portSet;
+    }
+
     private boolean isFocusOnPortMode = false;
     private String focusedHost = null;
     private int focusedPort = -1;
     private boolean isFocusOnUserMode = false;
     private User focusedUser = null;
+    private int currentPort = -1;
 
 
     private static ChatController instance;
@@ -35,49 +44,61 @@ public class ChatController {
 
 
     //TODO setPort
-    public void setPort(int portNumber) throws PortIsAlreadySetException {
-        if (portIsAlreadySet)
+    public void setPort(int portNumber) throws Exception {
+        if (isPortSet)
             throw new PortIsAlreadySetException();
-        portIsAlreadySet = true;
+        ServerController.getInstance().setPort(portNumber);
+        openPorts.add(portNumber);
+        isPortSet = true;
+        currentPort = portNumber;
     }
 
 
     //TODO rebindPort
-    public void rebindPort(int portNumber) throws PortIsNotOpenException {
-        if (!portIsAlreadySet)
-            throw new PortIsNotOpenException();
+    public void rebindPort(int portNumber) throws PortIsAlreadySetException {
+        if (openPorts.contains(portNumber))
+            throw new PortIsAlreadySetException();
+        ServerController.getInstance().rebindPort(portNumber);
+        currentPort = portNumber;
     }
 
 
     //TODO closePort
     public void closePort(int portNumber) throws PortIsNotOpenException {
-        if (!portIsAlreadySet)
-            throw new PortIsNotOpenException();
+        ServerController.getInstance().closePort(portNumber);
     }
 
 
-    public void autoSaveContactAddress() {
-
-    }
-
+    //TODO
     public void sendMessageByAddress(String messageText, String host, int portNumber)
             throws CouldNotSendMessageException {
         Message message = new Message(Menu.getCurrentUser(), messageText);
+        Menu.getCurrentUser().addSentMessage(message);
+        ClientController.getInstance().sendMessageByAddress(host, portNumber, message.getText());
     }
 
 
+    //TODO
     public void sendMessageByUsername(String username, String messageText)
             throws CouldNotSendMessageException, ContactNotFoundException {
-        if (Menu.getCurrentUser().getContactedUserByUsername(username) == null)
+        User user = Menu.getCurrentUser().getContactByUsername(username);
+        if (user == null)
             throw new ContactNotFoundException();
+        if (Connection.getConnectionByHostAndPort(user.getHost(), user.getPortNumber()) == null)
+            ClientController.getInstance().setupConnection(user.getHost(), user.getPortNumber());
         Message message = new Message(Menu.getCurrentUser(), messageText);
+        Menu.getCurrentUser().addSentMessage(message);
+        ClientController.getInstance().sendMessageByUser(user, message.getText());
     }
 
+    //TODO
     public void sendMessageByAddressFocusedOnHost(String messageText, int portNumber)
             throws CouldNotSendMessageException, NotFocusedOnHostException {
         if (!isFocusOnHostMode)
             throw new NotFocusedOnHostException();
         Message message = new Message(Menu.getCurrentUser(), messageText);
+        Menu.getCurrentUser().addSentMessage(message);
+        ClientController.getInstance().sendMessageByAddress(focusedHost, portNumber, message.getText());
     }
 
     public void focusOnHost(String host) {
@@ -101,17 +122,24 @@ public class ChatController {
     }
 
     public void focusOnUser(String username) throws ContactNotFoundException {
-        if (Menu.getCurrentUser().getContactedUserByUsername(username) == null)
+        if (Menu.getCurrentUser().getContactByUsername(username) == null)
             throw new ContactNotFoundException();
         isFocusOnUserMode = true;
-        focusedUser = Menu.getCurrentUser().getContactedUserByUsername(username);
+        focusedUser = Menu.getCurrentUser().getContactByUsername(username);
     }
 
-    public void sendMessageFullFocused(String messageText) throws NotFullFoucsedException {
+    public void sendMessageFullFocused(String messageText) throws NotFullFoucsedException,
+            CouldNotSendMessageException, ContactNotFoundException {
         if (!(isFocusOnUserMode || isFocusOnPortMode))
             throw new NotFullFoucsedException();
         Message message = new Message(Menu.getCurrentUser(), messageText);
+        Menu.getCurrentUser().addSentMessage(message);
+        if (isFocusOnUserMode)
+            ClientController.getInstance().sendMessageByUserFocused(focusedUser, message.getText());
+        else
+            ClientController.getInstance().sendMessageByAddressFocused(focusedHost, focusedPort, message.getText());
     }
+
 
     public void stopFocus() {
         isFocusOnHostMode = false;
@@ -120,6 +148,8 @@ public class ChatController {
         focusedPort = -1;
         isFocusOnUserMode = false;
         focusedUser = null;
+        ClientController.getInstance().setHasSetFocusedUser(false);
+        ClientController.getInstance().setHasSetFocusedAddress(false);
     }
 
     public String showContacts() throws NoItemAvailableException {
@@ -133,7 +163,7 @@ public class ChatController {
     }
 
     public String showContactByUsername(String username) throws ContactNotFoundException {
-        User contact = Menu.getCurrentUser().getContactedUserByUsername(username);
+        User contact = Menu.getCurrentUser().getContactByUsername(username);
         if (contact == null)
             throw new ContactNotFoundException();
         return contact.getHost() + ":" + contact.getPortNumber();
@@ -154,7 +184,7 @@ public class ChatController {
         Menu.getCurrentUser().sortReceivedMessages();
         StringBuilder result = new StringBuilder();
         for (Message receivedMessage : Menu.getCurrentUser().getReceivedMessages())
-            result.append(receivedMessage.getSender()).append(" -> ").append(receivedMessage.getText())
+            result.append(receivedMessage.getSender().getUsername()).append(" -> ").append(receivedMessage.getText())
                     .append(System.lineSeparator());
         return result.toString();
     }
@@ -199,6 +229,27 @@ public class ChatController {
             if (receivedMessage.getSender().getUsername().equals(sender.getUsername()))
                 messages.add(receivedMessage);
         return messages.size();
+    }
+
+    public void receiveMessage(String message) {
+        new ChatMenu().showMessage(message);
+    }
+
+    public void saveContact(String username, String host, String port) throws Exception {
+        try {
+            int portNumber = Integer.parseInt(port);
+            if (Menu.getCurrentUser().getContactByUsername(username) != null)
+                Menu.getCurrentUser().getContacts().remove(Menu.getCurrentUser().getContactByUsername(username));
+            User user = new User(username, "");
+            user.setHost(host);
+            user.setPortNumber(portNumber);
+            Menu.getCurrentUser().getContacts().add(user);
+        } catch (NumberFormatException e) {
+            throw new Exception("Invalid port number!");
+        }
+
+
+
     }
 
 }

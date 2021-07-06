@@ -12,7 +12,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Abbas-Bu-Azar" target="1.6" />
+      <module name="Abbas-Bu-Azar" target="7" />
       <module name="Secret-Messenger" target="16" />
       <module name="ThreadPool" target="16" />
       <module name="ThreadPool (1)" target="8" />

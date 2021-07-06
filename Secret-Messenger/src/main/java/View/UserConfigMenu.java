@@ -45,10 +45,11 @@ public class UserConfigMenu extends Menu {
     }
 
     private void logout() throws UserNotLoggedInException {
-        if (Menu.getCurrentMenu() == null)
+        if (Menu.getCurrentMenu() instanceof UserConfigMenu)
             throw new UserNotLoggedInException();
         Menu.setLoggedIn(false);
         Menu.setCurrentUser(null);
+        Menu.setCurrentMenu(new UserConfigMenu());
     }
 
     public void run(Scanner input) {
@@ -60,19 +61,13 @@ public class UserConfigMenu extends Menu {
                 this.login(command);
             else if (this.commandPatterns[2].matcher(command).find() && Menu.getCurrentMenu() instanceof UserConfigMenu)
                 this.logout();
+            else if (!UserConfigController.isLoggedIn() && new ChatMenu().matchesAPattern(command))
+                throw new UserHasNoAccessException();
             else
                 throw new InvalidCommandException();
             System.out.println("success");
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }
-    }
-
-
-    public static void main(String[] args) {
-        Pattern[] patterns = new UserConfigMenu().commandPatterns;
-        for (Pattern commandPattern : patterns) {
-            System.out.println(commandPattern.pattern() + "\t" + commandPattern.pattern().getClass().getSimpleName());
         }
     }
 }

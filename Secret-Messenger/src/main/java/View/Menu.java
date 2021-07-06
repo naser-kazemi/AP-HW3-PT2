@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public abstract class Menu {
 
-    private static Menu currentMenu = new UserConfigMenu();
+    private static Menu currentMenu;
     private static boolean loggedIn = false;
     private static User currentUser;
 
