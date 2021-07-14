@@ -11,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.*;
 
@@ -35,8 +36,8 @@ public class ClientController {
     public void setupConnection(String host, int portNumber) throws CouldNotSendMessageException {
         try {
             socket.close();
-            socket = new Socket(host, portNumber);
-            System.out.println(socket);
+            socket = new Socket();
+            socket.connect(new InetSocketAddress(host, portNumber), 1000);
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
         } catch (Exception e) {
             throw new CouldNotSendMessageException();
